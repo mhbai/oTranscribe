@@ -43,7 +43,53 @@ exportFormats.download.push({
         return md.replace(/\t/gm,"");           
     }
 });
-
+exportFormats.download.push({
+    name: 'SRT 字幕',
+    extension: 'srt',
+    fn: (txt) => {
+		var mediaLength = 0;
+        const player = getPlayer();		
+        if (player){
+			mediaLength = player.getLength();
+		}
+		txt = txtToSrt(txt, mediaLength);
+        const fullyClean = sanitizeHtml(txt, {
+            allowedTags: [ 'p', 'br' ]
+        });
+        const md = toMarkdown( fullyClean );
+        var dataIn = md.replace(/\t/gm,"");
+		dataIn = dataIn.replace(/\n+/g, '\n'); /* 多個換行變成一個 */
+		dataIn = dataIn.replace(/\s*\n\s*/gm, '\n'); /* 去掉頭尾的空白 */
+		dataIn = dataIn.replace(/(\n\d+\s*\n\d+\:\d+:\d+)/g, '\n$1'); /* 每段字幕前面多加一個空白行 */
+		dataIn = dataIn.replace(/^\s*\n*/, ''); //去掉最前面的空白
+		//dataIn = srt_order_number(dataIn);
+		//var lines = dataIn.split(/\n\n/);
+		//for(var i=0; i<lines.length; i++) {
+		//	lines[i] = lines[i].replace(/^\d+\n/, (i+1)+'\n');
+		//}
+		//return lines.join('\n\n').replace(/\n/g, '\r\n');
+		return dataIn.replace(/\n/g, '\r\n');
+    }
+});
+exportFormats.download.push({
+    name: '無時間之逐字稿',
+    extension: 'txt',	
+    fn: (txt) => {
+		//remove timestamp , add by gsyan 
+		txt = txt.replace(/<span\s+class="timestamp"\s+data-timestamp="[^"]+">[^<]+<\/span>/gm, '');
+        const fullyClean = sanitizeHtml(txt, {
+            allowedTags: [ 'p', 'br' ]
+        });
+        const md = toMarkdown( fullyClean );
+		var dataIn = md.replace(/\t/gm,""); 
+		dataIn = dataIn.replace(/\n+/g, '\n'); /* 多個換行變成一個 */
+		dataIn = dataIn.replace(/\s*\n\s*/gm, '\n'); /* 去掉頭尾的空白 */
+		dataIn = dataIn.replace(/^\s*\n*/, ''); //去掉最前面的空白
+		//dataIn = dataIn.replace(/(\d+\s*\n\d+\:\d+:\d+[^\n]+\n)/mg, ''); /* 去掉字幕序號及時間 */
+        return dataIn.replace(/\n/g, '\r\n');
+    }
+});
+	
 exportFormats.download.push({
     name: 'oTranscribe format',
     extension: 'otr',
@@ -171,4 +217,52 @@ function checkDownloadAttrSupport() {
 
 function convertToBase64(str) {
     return "data:application/octet-stream;base64," + btoa(str);
+}
+
+//add by gsyan
+function secondsToString(time) {
+	if(typeof(time)=='string') {
+		time = Number(time);
+	}
+    const hours = Math.floor(time / 3600).toString();
+    const minutes = ("0" + Math.floor(time / 60) % 60).slice(-2);
+    const seconds = ("0" + Math.floor( time % 60 )).slice(-2);
+	const ms = ("00" + Math.floor(time*1000 % 1000 )).slice(-3);
+    let formatted = minutes+":"+seconds;
+	formatted = hours + ":" + minutes + ":" + seconds + ',' + ms;
+    if (Number(hours)<10) {
+        formatted = '0'+formatted
+    }
+    formatted = formatted.replace(/\s/g,'');
+    return formatted;
+}
+function txtToSrt(txt, mediaLength) {
+	//txt = '<p>  <br><br><span class="timestamp" data-timestamp="0">00:00</span> 「九月九日憶山東兄弟」，  <br><br><span class="timestamp" data-timestamp="3.080321">00:03</span> 作者：王維：  <br><br><span class="timestamp" data-timestamp="4.357043">00:04</span>  獨在異鄉為異客，  <br><br><span class="timestamp" data-timestamp="6.239092">00:06</span> 每逢佳節倍思親。  <br><br><span class="timestamp" data-timestamp="8.988128">00:08</span> 遙知兄弟登高處，  <br><br><span class="timestamp" data-timestamp="11.15625">00:11</span>   遍插茱萸少一人。  </p>  <p>    </p>';
+	var re = /(<span\s+class="timestamp"\s+data-timestamp="([^"]+)">[^<]+)<\/span>/gm;
+	var timestamp = txt.match(re);
+	var total = timestamp.length;
+	var timeList = [];
+	for(var i=0; i<total; i++) {
+		var str = timestamp[i];
+		var m = str.match(/data-timestamp="([^"]+)">/);
+		timeList.push(secondsToString(m[1]));
+		if(mediaLength==0 && i==total-1) {
+			mediaLength = 5+Number(m[1]);
+		}
+	}
+	if(timeList.length>0) {
+		timeList.push(secondsToString(mediaLength));
+	}
+	var lines = ('  '+txt).split(/<span\s+class="timestamp"[^>]+>[^<]+<\/span>/);
+	var result = lines[0];
+	var str;
+	for(var i=1; i<lines.length; i++) {
+		if(typeof(timestamp[i-1])!='undefined') {
+			str = timestamp[i-1].replace(/>[^<]+<\/span>/, '>'+timeList[i-1]+' --&gt; '+timeList[i]+'<\/span><br>');
+			result += i+'<br>'+str;
+		}
+		result += lines[i];
+	}
+	//console.log(result);
+	return result.replace(/^\s+/, '');
 }

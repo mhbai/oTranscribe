@@ -47,6 +47,13 @@ function insertTimestamp(){
     var time = getTime();
     if (time) {
         const space = document.createTextNode("\u00A0");
+		
+		//add by gsyan
+		const br = document.createElement('br');
+		const br2 = document.createElement('br');
+		insertHTML(br);
+		insertHTML(br2);	
+		
         insertHTML(createTimestampEl(time));
         insertHTML(space);
         activateTimestamps();
