@@ -38,7 +38,22 @@ function applyLang(callback){
     if(lang) {
         document.webL10n.setLanguage(lang);
     } else {
-        document.webL10n.setLanguage('en');
+		var defaultLang = navigator.language || navigator.userLanguage;
+		switch(defaultLang.toLowerCase()) {
+			case 'zh-tw' :
+				lang = 'zh-hant';
+				break;
+			case 'zh-cn' :
+				lang = 'zh-hans';
+				break;
+			default :
+				lang = defaultLang.toLowerCase();
+				break;
+		}
+		if(typeof(languages[lang])=='undefined') {
+			lang = 'en';
+		}
+        document.webL10n.setLanguage(lang);
     }
 }
 
