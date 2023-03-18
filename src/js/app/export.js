@@ -12,7 +12,11 @@ function getTexteditorContents() {
 }
 
 function getFilename() {
-    return document.webL10n.get('file-name') + " " + (new Date()).toUTCString();
+	var timeNow = new Date();
+	//change date time string to: yyyy-mm_dd_hhmmss
+	var localTime = (new Date(timeNow.getTime() - (timeNow.getTimezoneOffset() * 60000))).toISOString().substring(0, 19).replace(/T/, '_').replace(/\:/g, '');
+    //return document.webL10n.get('file-name') + " " + (new Date()).toUTCString();
+	return document.webL10n.get('file-name') + "-" + localTime;	
 }
 
 let exportFormats = {
