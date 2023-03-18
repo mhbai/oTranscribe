@@ -13,11 +13,27 @@ function getTexteditorContents() {
 
 function getFilename() {
 	var timeNow = new Date();
-	//change date time string to: yyyy-mm_dd_hhmmss
 	var localTime = (new Date(timeNow.getTime() - (timeNow.getTimezoneOffset() * 60000))).toISOString().substring(0, 19).replace(/T/, '_').replace(/\:/g, '');
     //return document.webL10n.get('file-name') + " " + (new Date()).toUTCString();
-	return document.webL10n.get('file-name') + "-" + localTime;	
+	return document.webL10n.get('file-name') + "-" + localTime;
 }
+
+//fix the broken L10n, add by gsyan
+function updateWebL10n() {
+	const panel = document.querySelector('.export-panel');
+	var match;
+	for(var i=0; i<panel.childElementCount; i++) {
+		var element = panel.children[i];
+		var txt = element.textContent
+		if(match = txt.match(/\{\{([^\}]+)\}\}/)) {
+			element.textContent = document.webL10n.get(match[1]);
+		}
+		var id = element.getAttribute('data-l10n-id');
+		if(id && document.webL10n.get(id)) {
+			element.textContent = document.webL10n.get(id);
+		}
+	}
+}	
 
 let exportFormats = {
     download: [],
@@ -25,7 +41,7 @@ let exportFormats = {
 };
 
 exportFormats.download.push({
-    name: 'Markdown',
+    name: '{{export-markdown}}', //'Markdown',
     extension: 'md',
     fn: (txt) => {
         const fullyClean = sanitizeHtml(txt, {
@@ -37,7 +53,7 @@ exportFormats.download.push({
 });
 
 exportFormats.download.push({
-    name: 'Plain text',
+    name: '{{export-text}}', //'Plain text',
     extension: 'txt',
     fn: (txt) => {
         const fullyClean = sanitizeHtml(txt, {
@@ -48,7 +64,7 @@ exportFormats.download.push({
     }
 });
 exportFormats.download.push({
-    name: 'SRT 字幕',
+	name: '{{export-srt}}', //'SRT 字幕',
     extension: 'srt',
     fn: (txt) => {
 		var mediaLength = 0;
@@ -76,7 +92,7 @@ exportFormats.download.push({
     }
 });
 exportFormats.download.push({
-    name: '無時間之逐字稿',
+    name: '{{export-none-time}}', //'無時間之逐字稿',
     extension: 'txt',	
     fn: (txt) => {
 		//remove timestamp , add by gsyan 
@@ -95,7 +111,7 @@ exportFormats.download.push({
 });
 	
 exportFormats.download.push({
-    name: 'oTranscribe format',
+    name: '{{export-otr}}', //'oTranscribe format',
     extension: 'otr',
     fn: (txt) => {
         let result = {};
@@ -188,7 +204,9 @@ export function exportSetup(){
         
         $('.export-panel')
             .html(generateButtons(filename));
-
+		
+		updateWebL10n(); //fix the L10N are brocken
+		
         exportFormats.send.forEach(format => {
 
             if (format.ready) {
