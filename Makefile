@@ -16,6 +16,12 @@ compile_static:
 	# compile l10n files
 	for f in src/l10n/*.ini; do (cat "$${f}"; echo) >> dist/data.ini; done
 	
+	# generate l10n file for local access
+	echo "dataIniLines = function(){/*--keep this line--" > dist/data.ini.js
+	cat dist/data.ini >> dist/data.ini.js
+	echo "-----*/}.toString().replace(/\\\r/g,\"\").slice(\"function(){/*--keep this line--\".length+1,-9);" >> dist/data.ini.js
+
+	
 	# copy over static assets
 	cp -r src/img src/opensource.htm src/help.htm src/privacy.htm dist/
 	cp ./node_modules/jakecache/dist/jakecache.js ./node_modules/jakecache/dist/jakecache-sw.js dist/
@@ -33,3 +39,6 @@ build_prod:
 	
 	# run webpack
 	./node_modules/webpack/bin/webpack.js -p
+	
+	#overwrite the file from webpack
+	cp -r src/js/webL10n/l10n-for-local.js dist/l10n.js
