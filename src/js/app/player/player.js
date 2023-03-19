@@ -78,7 +78,38 @@ class Player{
         setPlayerHeight();
         setInterval(setPlayerHeight, 200);
 
-        
+        const setTimestampActive = () => {
+			if(this.getStatus()=='playing') {
+				const cName = 'timestamp-current'
+				const timestamp = document.querySelectorAll('.timestamp');
+				if(timestamp) {
+					const time = this.getTime();
+					const current = document.querySelectorAll('.'+cName);
+					if(current) {
+						for(var i=0; i<current.length; i++) {
+							current[i].classList.remove(cName);
+						}
+					}
+					var elm,
+						t,
+						elmNow;
+					for(var i=0; i<timestamp.length; i++) {
+						var elm = timestamp[i];
+						var t = Number(elm.getAttribute('data-timestamp'));
+						if(!isNaN(t) && t>time) {
+							break;
+						}
+						elmNow = elm;
+					}
+					if(typeof(elmNow)=='undefined') {
+						elmNow = elm;
+					}
+					elmNow.classList.add(cName);
+				}
+			}
+		};
+		setInterval(setTimestampActive, 100);
+			
 
 	}
 
