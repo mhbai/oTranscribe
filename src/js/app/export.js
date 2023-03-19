@@ -134,6 +134,8 @@ exportFormats.download.push({
     }
 });
 
+//disable send to Google Drive by gsyan
+/* 
 exportFormats.send.push({
     name: 'Google Drive',
     setup: function(cb) {
@@ -143,6 +145,7 @@ exportFormats.send.push({
         this.checkGoogleAuth(opts);
     }
 })
+*/
 
 function generateButtons(filename) {
     
