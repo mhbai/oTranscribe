@@ -78,6 +78,8 @@ class Player{
         setPlayerHeight();
         setInterval(setPlayerHeight, 200);
 
+		//the timestamp element add 'timestamp-current' class
+		//to indicate the playback position
         const setTimestampActive = () => {
 			if(this.getStatus()=='playing') {
 				const cName = 'timestamp-current';
@@ -92,19 +94,18 @@ class Player{
 					}
 					var elm,
 						t,
-						elmNow;
+						elm;
 					for(var i=0; i<timestamp.length; i++) {
-						var elm = timestamp[i];
+						elm = timestamp[i];
 						var t = Number(elm.getAttribute('data-timestamp'));
 						if(!isNaN(t) && t>time) {
+							elm = timestamp[(i-1<0?0:i-1)];
 							break;
 						}
-						elmNow = elm;
 					}
-					if(typeof(elmNow)=='undefined') {
-						elmNow = elm;
+					if(typeof(elm)!='undefined') {
+						elm.classList.add(cName);
 					}
-					elmNow.classList.add(cName);
 				}
 			}
 		};

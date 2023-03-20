@@ -89,6 +89,7 @@ function onClick() {
         }
     }
 	
+	//the clicked timestamp element add 'timestamp-current'
 	const cName = 'timestamp-current';
 	const current = document.querySelectorAll('.'+cName);
 	if(current) {
