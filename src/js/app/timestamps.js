@@ -87,7 +87,17 @@ function onClick() {
         } else {
             player.setTime( time );
         }
-    }    
+    }
+	
+	const cName = 'timestamp-current';
+	const current = document.querySelectorAll('.'+cName);
+	if(current) {
+		for(var i=0; i<current.length; i++) {
+			current[i].classList.remove(cName);
+		}
+	}
+	this.classList.add(cName);
+	
 }
 
 // backwards compatibility, as old timestamps use setFromTimestamp() and ts.setFrom()

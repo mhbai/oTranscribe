@@ -80,7 +80,7 @@ class Player{
 
         const setTimestampActive = () => {
 			if(this.getStatus()=='playing') {
-				const cName = 'timestamp-current'
+				const cName = 'timestamp-current';
 				const timestamp = document.querySelectorAll('.timestamp');
 				if(timestamp) {
 					const time = this.getTime();
