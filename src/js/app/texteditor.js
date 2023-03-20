@@ -68,6 +68,14 @@ function setEditorContents( dirtyText, opts = {} ) {
             textbox[0].innerHTML = '';
             $textbox[0].appendChild(newText);    
         }
+		// remove playtrack position indicator
+		const timestampCurrent = Array.from(
+			$textbox[0].querySelectorAll('.timestamp-current')
+		);
+		timestampCurrent.forEach(el => {
+            el.classList.remove('timestamp-current');
+        });
+		
         activateTimestamps();
         $('.textbox-container').scrollTop(0);
     }
