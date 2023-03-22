@@ -31,6 +31,8 @@ mkdir dist\help
 copy src\help.htm dist\help\index.html
 mkdir dist\privacy
 copy src\privacy.htm dist\privacy\index.html
+mkdir dist\opensource
+copy src\opensource.htm dist\opensource\index.html
 
 
 if [%1]==[build_prod] GOTO build_prod

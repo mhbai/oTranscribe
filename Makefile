@@ -29,6 +29,8 @@ compile_static:
 	mv dist/help.htm dist/help/index.html	
 	mkdir dist/privacy
 	mv dist/privacy.htm dist/privacy/index.html
+	mkdir dist/opensource
+	mv dist/opensource.htm dist/opensource/index.html
 
 build_prod:
 	$(MAKE) compile_static
