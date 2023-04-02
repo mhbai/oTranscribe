@@ -96,7 +96,7 @@ exportFormats.download.push({
     extension: 'txt',	
     fn: (txt) => {
 		//remove timestamp , add by gsyan 
-		txt = txt.replace(/<span\s+class="timestamp"\s+data-timestamp="[^"]+">[^<]+<\/span>/gm, '');
+		txt = txt.replace(/<span\s+class="[^"]+"\s+data-timestamp="[^"]+"[^>]*>[^<]+<\/span>/gm, '');
         const fullyClean = sanitizeHtml(txt, {
             allowedTags: [ 'p', 'br' ]
         });
@@ -263,6 +263,8 @@ function secondsToString(time) {
 }
 function txtToSrt(txt, mediaLength) {
 	//txt = '<p>  <br><br><span class="timestamp" data-timestamp="0">00:00</span> 「九月九日憶山東兄弟」，  <br><br><span class="timestamp" data-timestamp="3.080321">00:03</span> 作者：王維：  <br><br><span class="timestamp" data-timestamp="4.357043">00:04</span>  獨在異鄉為異客，  <br><br><span class="timestamp" data-timestamp="6.239092">00:06</span> 每逢佳節倍思親。  <br><br><span class="timestamp" data-timestamp="8.988128">00:08</span> 遙知兄弟登高處，  <br><br><span class="timestamp" data-timestamp="11.15625">00:11</span>   遍插茱萸少一人。  </p>  <p>    </p>';
+	//<span class="timestamp timestamp-current" data-timestamp="8.7" contenteditable="false">00:08</span>
+	txt = txt.replace(/\s*timestamp-current|\s*contenteditable="[^"]+"/mg,'');
 	var re = /(<span\s+class="timestamp"\s+data-timestamp="([^"]+)">[^<]+)<\/span>/gm;
 	var timestamp = txt.match(re);
 	var total = timestamp.length;
