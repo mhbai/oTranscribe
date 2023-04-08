@@ -106,9 +106,9 @@ function onClick() {
     } else {
 		const lang = (localStorageManager.getItem('oTranscribe-language') || navigator.language || navigator.userLanguage);
 		if(lang.match(/^zh-/i)) {
-			alert('請先選擇聲音、影片檔案，或是YouTube影片，才能播放聲音。');
+			alert('請先選擇聲音(影片)檔案，或是YouTube影片，才能播放聲音。');
 		} else {
-			alert('Please select a sound, video file, or YouTube video to play the sound.');
+			alert('Please choose audio(or video) file, or YouTube video to play the audio.');
 		}
 	}		
 }
