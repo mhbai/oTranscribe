@@ -87,18 +87,30 @@ function onClick() {
         } else {
             player.setTime( time );
         }
-    }
-	
-	//the clicked timestamp element add 'timestamp-current'
-	const cName = 'timestamp-current';
-	const current = document.querySelectorAll('.'+cName);
-	if(current) {
-		for(var i=0; i<current.length; i++) {
-			current[i].classList.remove(cName);
+		//play the media at current time
+		if(player.getStatus()!='playing') {
+			//setTimeout(function() {				
+			//	player.play();
+			//}, 500);
+			player.driver.play();
 		}
-	}
-	this.classList.add(cName);
-	
+		//the clicked timestamp element add 'timestamp-current'
+		const cName = 'timestamp-current';
+		const current = document.querySelectorAll('.'+cName);
+		if(current) {
+			for(var i=0; i<current.length; i++) {
+				current[i].classList.remove(cName);
+			}
+		}
+		this.classList.add(cName);
+    } else {
+		const lang = (localStorageManager.getItem('oTranscribe-language') || navigator.language || navigator.userLanguage);
+		if(lang.match(/^zh-/i)) {
+			alert('請先選擇聲音、影片檔案，或是YouTube影片，才能播放聲音。');
+		} else {
+			alert('Please select a sound, video file, or YouTube video to play the sound.');
+		}
+	}		
 }
 
 // backwards compatibility, as old timestamps use setFromTimestamp() and ts.setFrom()
