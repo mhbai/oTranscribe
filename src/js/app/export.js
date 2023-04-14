@@ -57,10 +57,11 @@ exportFormats.download.push({
     extension: 'txt',
     fn: (txt) => {
         const fullyClean = sanitizeHtml(txt, {
-            allowedTags: [ 'p' ]
+            allowedTags: [ 'p', 'br' ]
         });
         const md = toMarkdown( fullyClean );
-        return md.replace(/\t/gm,"");           
+        //return md.replace(/\t/gm,"");
+		return trim_and_unix2dos(md);
     }
 });
 exportFormats.download.push({
@@ -78,6 +79,7 @@ exportFormats.download.push({
         });
         const md = toMarkdown( fullyClean );
         var dataIn = md.replace(/\t/gm,"");
+		dataIn = dataIn.replace(/\r/gm, '\n');
 		dataIn = dataIn.replace(/\n+/g, '\n'); /* 多個換行變成一個 */
 		dataIn = dataIn.replace(/\s*\n\s*/gm, '\n'); /* 去掉頭尾的空白 */
 		dataIn = dataIn.replace(/(\n\d+\s*\n\d+\:\d+:\d+)/g, '\n$1'); /* 每段字幕前面多加一個空白行 */
@@ -101,12 +103,13 @@ exportFormats.download.push({
             allowedTags: [ 'p', 'br' ]
         });
         const md = toMarkdown( fullyClean );
-		var dataIn = md.replace(/\t/gm,""); 
-		dataIn = dataIn.replace(/\n+/g, '\n'); /* 多個換行變成一個 */
-		dataIn = dataIn.replace(/\s*\n\s*/gm, '\n'); /* 去掉頭尾的空白 */
-		dataIn = dataIn.replace(/^\s*\n*/, ''); //去掉最前面的空白
-		//dataIn = dataIn.replace(/(\d+\s*\n\d+\:\d+:\d+[^\n]+\n)/mg, ''); /* 去掉字幕序號及時間 */
-        return dataIn.replace(/\n/g, '\r\n');
+		//var dataIn = md.replace(/\t/gm,""); 
+		//dataIn = dataIn.replace(/\n+/g, '\n'); /* 多個換行變成一個 */
+		//dataIn = dataIn.replace(/\s*\n\s*/gm, '\n'); /* 去掉頭尾的空白 */
+		//dataIn = dataIn.replace(/^\s*\n*/, ''); //去掉最前面的空白
+		////dataIn = dataIn.replace(/(\d+\s*\n\d+\:\d+:\d+[^\n]+\n)/mg, ''); /* 去掉字幕序號及時間 */
+        //return dataIn.replace(/\n/g, '\r\n');
+		return trim_and_unix2dos(md);
     }
 });
 	
@@ -208,7 +211,7 @@ export function exportSetup(){
         $('.export-panel')
             .html(generateButtons(filename));
 		
-		updateWebL10n(); //fix the L10N are brocken
+		updateWebL10n(); //fix the L10N are broken
 		
         exportFormats.send.forEach(format => {
 
@@ -292,4 +295,13 @@ function txtToSrt(txt, mediaLength) {
 	}
 	//console.log(result);
 	return result.replace(/^\s+/, '');
+}
+function trim_and_unix2dos(dataIn) {
+	dataIn = dataIn.replace(/\t/gm,"");
+	dataIn = dataIn.replace(/\r/gm, '\n');
+	dataIn = dataIn.replace(/\n+/gm, '\n'); /* 多個換行變成一個 */
+	dataIn = dataIn.replace(/\s*\n\s*/gm, '\n'); /* 去掉頭尾的空白 */
+	dataIn = dataIn.replace(/^\s*\n*/, ''); //去掉最前面的空白
+	//dataIn = dataIn.replace(/(\d+\s*\n\d+\:\d+:\d+[^\n]+\n)/mg, ''); /* 去掉字幕序號及時間 */
+	return dataIn.replace(/\n/g, '\r\n');
 }
