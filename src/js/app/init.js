@@ -87,21 +87,33 @@ function onLocalized() {
     const resetInput = inputSetup({
         create: file => {
             const driver = isVideoFormat(file) ? playerDrivers.HTML5_VIDEO : playerDrivers.HTML5_AUDIO;
-		    createPlayer({
-		        driver: driver,
-		        source: window.URL.createObjectURL(file),
+            createPlayer({
+                driver: driver,
+                source: window.URL.createObjectURL(file),
                 name: file.name
-		    }).then(() => {
+            }).then(() => {
                 bindPlayerToUI(file.name);
-		    });
+            });
         },
         createFromURL: url => {
-		    createPlayer({
-		        driver: playerDrivers.YOUTUBE,
-		        source: url
-		    }).then(() => {
-                bindPlayerToUI();
-		    });
+            var yt = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            if(url.match(yt)) {
+                createPlayer({
+                    driver: playerDrivers.YOUTUBE,
+                    source: url
+                }).then(() => {
+                    bindPlayerToUI();
+                });
+            } else {
+                const driver = url.match(/\.(mov|mp4|avi|webm|mkv)/i) ? playerDrivers.HTML5_VIDEO : playerDrivers.HTML5_AUDIO;
+                createPlayer({
+                    driver: driver,
+                    source: url,
+                    name: url
+                }).then(() => {
+                    bindPlayerToUI(url);
+                });	
+            }
         }
     });
     
