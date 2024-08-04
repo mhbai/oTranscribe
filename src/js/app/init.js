@@ -105,7 +105,7 @@ function onLocalized() {
                     bindPlayerToUI();
                 });
             } else {
-                const driver = url.match(/\.(mov|mp4|avi|webm|mkv)/i) ? playerDrivers.HTML5_VIDEO : playerDrivers.HTML5_AUDIO;
+                const driver = isVideoFormat(url) ? playerDrivers.HTML5_VIDEO : playerDrivers.HTML5_AUDIO;
                 createPlayer({
                     driver: driver,
                     source: url,

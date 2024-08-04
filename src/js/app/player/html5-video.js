@@ -29,9 +29,11 @@ export default class HTML5_VIDEO {
         return (!this.destroyed && (!isNaN(this.element.duration)) && (this.element.readyState === 4));
     }
     getSpeed() {
+        if(!this.element || !this.element.playbackRate) {console.log('Error!!');return 1;}
         return this.element.playbackRate;
     }
     setSpeed(speed){
+        if(!this.element || !this.element.playbackRate) {console.log('Error!!');return speed;}
         return this.element.playbackRate = speed;
     }
     destroy(speed){

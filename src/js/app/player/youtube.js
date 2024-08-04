@@ -104,14 +104,14 @@ export default class YOUTUBE {
         return this._isReady;
     }
     getSpeed(){
-        if ('getPlaybackRate' in this._ytEl) {
+        if (this._ytEl && typeof(this._ytEl['getPlaybackRate'])=='function') {
             return this._ytEl.getPlaybackRate();
         } else {
             return 1;
         }
     }
     setSpeed(speed){
-        if ('setPlaybackRate' in this._ytEl) {
+        if (this._ytEl && typeof(this._ytEl['setPlaybackRate'])=='function') {
             this._ytEl.setPlaybackRate(speed);
         }
     }
