@@ -43,6 +43,32 @@ function insertHTML(newElement) {
 }
 
 
+/**
+ * auto move cursor to next paragraph and auto scroll down
+ * add auto=1 at URL to enable this feature
+ * @since 2024.08.04
+ */
+function autoMoveToNext() {
+  const enableAuto = (new URLSearchParams(window.location.search)).get('auto');
+  if(!enableAuto || enableAuto=='false') return;
+  var anchorNode = document.getSelection().anchorNode;
+  //console.log(anchorNode);
+  if(typeof(anchorNode.innerHTML)=='undefined') {
+    anchorNode = anchorNode.parentElement;
+  }
+  var nextOne = anchorNode.nextElementSibling
+  //console.log(anchorNode, nextOne);
+  var range = document.createRange();
+  range.setStart(nextOne, 0);
+  range.setEnd(nextOne, 0);
+  var selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  var height = parseInt(getComputedStyle(anchorNode).getPropertyValue("height"));
+  var p = document.querySelector('.textbox-container');
+  p.scrollBy(0, height);
+};
+
 function insertTimestamp(){
     var time = getTime();
     if (time) {
@@ -57,6 +83,7 @@ function insertTimestamp(){
         insertHTML(createTimestampEl(time));
         insertHTML(space);
         activateTimestamps();
+		autoMoveToNext(); //add by gsyan
     }
 }
 
