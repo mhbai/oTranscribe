@@ -90,7 +90,7 @@ exportFormats.download.push({
 		//	lines[i] = lines[i].replace(/^\d+\n/, (i+1)+'\n');
 		//}
 		//return lines.join('\n\n').replace(/\n/g, '\r\n');
-		return dataIn.replace(/\n/g, '\r\n');
+		return dataIn.replace(/\n/g, '\r\n')+'\r\n';
     }
 });
 exportFormats.download.push({
