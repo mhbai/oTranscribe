@@ -102,7 +102,7 @@ function show(){
     $('.input').addClass('active');
     $('.sbutton.time').removeClass('active');
     $('.text-panel').removeClass('editing');
-    
+    try{document.querySelector('.textbox-container').scrollTo(0, 0);}catch(e){};
 }
 
 export function getQueryParams(){
