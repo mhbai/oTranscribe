@@ -270,7 +270,7 @@ function txtToSrt(txt, mediaLength) {
 	txt = txt.replace(/\s*timestamp-current|\s*contenteditable="[^"]+"/mg,'');
 	var re = /(<span\s+class="timestamp"\s+data-timestamp="([^"]+)">[^<]+)<\/span>/gm;
 	var timestamp = txt.match(re);
-	var total = timestamp.length;
+	var total = (timestamp ? timestamp.length : 0);
 	var timeList = [];
 	for(var i=0; i<total; i++) {
 		var str = timestamp[i];
