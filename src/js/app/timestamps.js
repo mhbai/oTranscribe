@@ -53,7 +53,21 @@ function autoMoveToNext() {
   if(!enableAuto || enableAuto=='false') return;
   var anchorNode = document.getSelection().anchorNode;
   //console.log(anchorNode);
-  if(typeof(anchorNode.innerHTML)=='undefined') {
+  //console.log(anchorNode.nextSibling);
+  if(anchorNode.nextSibling && anchorNode.nextSibling.tagName == 'BR') {
+	if(anchorNode.nextSibling.nextSibling) {
+      anchorNode = anchorNode.nextSibling.nextSibling;
+	  //console.log('nextSibling: ',anchorNode);
+	} else {
+	  anchorNode = anchorNode.parentElement;	
+    }
+  }
+  if(!anchorNode || (anchorNode && !anchorNode.nextElementSibling && (anchorNode.parentElement && !anchorNode.parentElement.nextElementSibling) ) ) {
+	  console.log('next element not found');
+	  return;
+  }
+  //if(typeof(anchorNode.innerHTML)=='undefined') {
+  if(!anchorNode || !anchorNode.nextElementSibling) {
     anchorNode = anchorNode.parentElement;
   }
   var nextOne = anchorNode.nextElementSibling
@@ -76,9 +90,9 @@ function insertTimestamp(){
 		
 		//add by gsyan
 		const br = document.createElement('br');
-		const br2 = document.createElement('br');
 		insertHTML(br);
-		insertHTML(br2);	
+		//const br2 = document.createElement('br');
+		//insertHTML(br2);	
 		
         insertHTML(createTimestampEl(time));
         insertHTML(space);
