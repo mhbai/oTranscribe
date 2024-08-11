@@ -113,6 +113,7 @@ function srt_to_otr(strInput)  {
 
         dataTotal = 1;
         while ((i+dataTotal) < lines.length && lines[i + dataTotal].replace(/\s/g,'') != '') {
+          lines[i + dataTotal] = lines[i + dataTotal].replace(/\'/mg, '&#39;').replace(/\"/mg, '&#34;');
 		  html += lines[i + dataTotal++] + '<br>';
         }
 		html += '<br>'; //多加一行空白行, 分隔會比較清楚
