@@ -109,24 +109,25 @@ function srt_to_otr(strInput)  {
 		} else {
 			timeString = RegExp.$1+':'+RegExp.$2+':'+RegExp.$3
 		}
-		html += '<span class=\\"timestamp\\" data-timestamp=\\"' + timeStamp + '\\">' + timeString + '</span>&nbsp;';
+		//html += '<span class=\\"timestamp\\" data-timestamp=\\"' + timeStamp + '\\">' + timeString + '</span>&nbsp;';
+		html += '<span class="timestamp" data-timestamp="' + timeStamp + '">' + timeString + '</span>&nbsp;';
 
         dataTotal = 1;
         while ((i+dataTotal) < lines.length && lines[i + dataTotal].replace(/\s/g,'') != '') {
-          lines[i + dataTotal] = lines[i + dataTotal].replace(/\'/mg, '&#39;').replace(/\"/mg, '&#34;');
+		  //lines[i + dataTotal] = lines[i + dataTotal].replace(/\'/mg, '&#39;').replace(/\"/mg, '&#34;');
 		  html += lines[i + dataTotal++] + '<br>';
         }
+
 		html += '<br>'; //多加一行空白行, 分隔會比較清楚
         i += dataTotal;
       } else {
         //html += '<p>' + line + '</p>'; //字幕序號
       }
     }
-    var header = '{"text": "';
-    //var footer = '","media-time": ' + getSeconds(timeEnd) + '}';
-	var footer = '","media-time": "" }';
-
-    return (header + html + footer)
+    //var header = '{"text": "';
+	//var footer = '","media-time": "" }';
+    //return (header + html + footer);
+	return JSON.stringify({"text":html, "media-time": "" });
   } else {
 	return null;
   }
