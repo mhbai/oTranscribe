@@ -19,6 +19,7 @@ const getCursor = () => {
 			endOffset: range.endOffset
 		};
 	}
+	//console.log('get: ', rangeBackup);
 }
 /**
  * recover the current cursor position
@@ -33,11 +34,13 @@ const setCursor = () => {
 		selection.removeAllRanges();
 		selection.addRange(range);
 	}
+	//console.log('set: ', rangeBackup);
 }
 
 const hide = () => {
+	setCursor(); //restore the cursor
     timeSelectionModalActive = false;
-    $('.controls .time-selection').removeClass('active');
+    $('.controls .time-selection').removeClass('active');	
 }
 
 const show = () => {
@@ -67,19 +70,19 @@ const show = () => {
                 player.setTime(parseFloat(time) * 60);
             }
             hide();
-			setCursor(); //restore the cursor
+			//setCursor(); //restore the cursor
         }
     }
 }
 
 const toggle = () => {
     if (timeSelectionModalActive) {
-        hide();
+        hide();		
     } else {
         show();
-    }
+    }	
 }
 
 export default {
-    toggle, show, hide
+    toggle, show, hide, getCursor, setCursor
 }

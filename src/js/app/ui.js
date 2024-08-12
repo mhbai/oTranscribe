@@ -26,28 +26,36 @@ export function bindPlayerToUI(filename = '') {
     addKeyboardShortcut(shortcuts.forwards, player.skip.bind(player, 'forwards'));
     
     $('.skip-backwards').off().mousedown(function(){
+		timeSelectionModal.getCursor(); //save the cursor
         player.skip('backwards');
         skippingButtonInterval = setInterval(() => {
             player.skip('backwards');
         },100);
     }).mouseup(function(){
         clearInterval(skippingButtonInterval);
+		timeSelectionModal.setCursor(); //restore the cursor
     });
     $('.skip-forwards').off().mousedown(function(){
+		timeSelectionModal.getCursor(); //save the cursor
         player.skip('forwards');    
         skippingButtonInterval = setInterval(() => {
             player.skip('forwards');
         },100);
     }).mouseup(function(){
         clearInterval(skippingButtonInterval);
+		timeSelectionModal.setCursor(); //restore the cursor
     });
     
-    $playPauseButton.off().click(playPause);
+    $playPauseButton.off().click(function() {
+		timeSelectionModal.getCursor(); //save the cursor
+		playPause();
+		timeSelectionModal.setCursor(); //restore the cursor
+	});
     addKeyboardShortcut(shortcuts.playPause, playPause)
     
     addKeyboardShortcut(shortcuts.timeSelection, timeSelectionModal.toggle);
-    $('.player-time').off().click(timeSelectionModal.toggle);
-    
+	$('.player-time').off().click(timeSelectionModal.toggle);    
+	
     let changingSpeed = false;
     $('.speed-slider')
         .attr('min', player.minSpeed)
@@ -71,9 +79,12 @@ export function bindPlayerToUI(filename = '') {
 
     // make speed box sticky if button is clicked
     $( ".speed" ).off().mousedown(function() {
+		timeSelectionModal.getCursor(); //save the cursor
         if ($('.speed-box').not(':hover').length) {
             $(this).toggleClass('fixed');
-        }    
+        }
+    }).mouseup(function(){
+		timeSelectionModal.setCursor(); //restore the cursor
     });
 
     const playerHook = document.querySelector('#player-hook');
@@ -87,6 +98,14 @@ export function bindPlayerToUI(filename = '') {
             hours: true
         });
         document.querySelector('.player-time').style.display = 'block';
+		document.querySelector('.player-time').style['user-select'] = 'none'; //for getCursor & setCursor
+		try {
+			$('.progressor').mousedown(function() {
+				timeSelectionModal.getCursor(); //save the cursor
+			}).mouseup(function(){
+				timeSelectionModal.setCursor(); //restore the cursor
+			});
+		}catch(e) {};
     } else {
         document.querySelector('.player-time').style.display = 'none';
     }
