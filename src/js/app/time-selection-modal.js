@@ -4,6 +4,36 @@ import { insertTimestamp, convertTimestampToSeconds, formatMilliseconds } from '
 
 let timeSelectionModalActive = false;
 const $timeSelection = $('.controls .time-selection');
+let rangeBackup = {}; //for backup the cursor position, apply with getCursor && setCursor
+
+/**
+ * get the current cursor position
+ * @since 2024.08.12
+ */
+const getCursor = () => {
+	if (window.getSelection && window.getSelection().rangeCount) {
+		const range = window.getSelection().getRangeAt(0);
+		rangeBackup = {
+			node: range.startContainer,
+			startOffset: range.startOffset,
+			endOffset: range.endOffset
+		};
+	}
+}
+/**
+ * recover the current cursor position
+ * @since 2024.08.12
+ */
+const setCursor = () => {
+	if(rangeBackup && rangeBackup.node) {
+		const range = document.createRange();
+		range.setStart(rangeBackup.node, rangeBackup.startOffset);
+		range.setEnd(rangeBackup.node, rangeBackup.endOffset);
+		const selection = window.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
+	}
+}
 
 const hide = () => {
     timeSelectionModalActive = false;
@@ -13,6 +43,7 @@ const hide = () => {
 const show = () => {
     timeSelectionModalActive = true;
     const player = getPlayer();
+	getCursor();	//save the cursor
 
     if (timeSelectionModalActive === true) {
         $timeSelection.addClass('active');
@@ -36,6 +67,7 @@ const show = () => {
                 player.setTime(parseFloat(time) * 60);
             }
             hide();
+			setCursor(); //restore the cursor
         }
     }
 }
