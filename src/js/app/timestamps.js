@@ -41,8 +41,6 @@ function insertHTML(newElement) {
         sel.addRange(range);
     }
 }
-
-
 /**
  * auto move cursor to next paragraph and auto scroll down
  * add auto=1 at URL to enable this feature
@@ -51,36 +49,55 @@ function insertHTML(newElement) {
 function autoMoveToNext() {
   const enableAuto = (new URLSearchParams(window.location.search)).get('auto');
   if(!enableAuto || enableAuto=='false') return;
+
+  var startAt = 0;
   var anchorNode = document.getSelection().anchorNode;
+  var anchorOffset = document.getSelection().anchorOffset;
+  
+  const textboxStyle = getComputedStyle(document.querySelector('#textbox'));
+  var scrollOffset = parseInt(getComputedStyle(anchorNode).getPropertyValue("height"));
+  if(scrollOffset >= parseInt(textboxStyle.getPropertyValue("height"))/4) {
+    scrollOffset = parseInt(textboxStyle.getPropertyValue("lineHeight"));
+  }
+  
+  if(anchorNode.nodeName != '#text') {
+    anchorNode = anchorNode.childNodes[anchorOffset];
+  }
   //console.log(anchorNode);
-  //console.log(anchorNode.nextSibling);
-  if(anchorNode.nextSibling && anchorNode.nextSibling.tagName == 'BR') {
-	if(anchorNode.nextSibling.nextSibling) {
-      anchorNode = anchorNode.nextSibling.nextSibling;
-	  //console.log('nextSibling: ',anchorNode);
-	} else {
-	  anchorNode = anchorNode.parentElement;	
+  var nextNode = anchorNode.nextSibling;
+  //skip text tail , <BR> , blank elements
+  while(!nextNode || nextNode.nodeName === 'BR' || (nextNode.nodeName != '#text' && nextNode.textContent.replace(/\s/g,'')=='') ) {
+    if(!nextNode) {
+      anchorNode = anchorNode.parentElement;
+      nextNode = anchorNode.nextSibling;;
+    } else {
+      nextNode = nextNode.nextSibling;
+      if(nextNode) {
+        anchorNode = nextNode;
+        if(nextNode.nodeName == '#text' || (nextNode.nodeName != 'BR' && nextNode.textContent.replace(/\s/g,'')!='') ) {
+          if(nextNode.classList.contains('timestamp')) {
+            nextNode = nextNode.nextSibling;
+            startAt = 1;
+          }
+          break;
+        }
+      }
     }
+    //console.log('>>> ',nextNode);
   }
-  if(!anchorNode || (anchorNode && !anchorNode.nextElementSibling && (anchorNode.parentElement && !anchorNode.parentElement.nextElementSibling) ) ) {
-	  console.log('next element not found');
-	  return;
-  }
-  //if(typeof(anchorNode.innerHTML)=='undefined') {
-  if(!anchorNode || !anchorNode.nextElementSibling) {
-    anchorNode = anchorNode.parentElement;
-  }
-  var nextOne = anchorNode.nextElementSibling
-  //console.log(anchorNode, nextOne);
+  //console.log(nextNode);    
+
+  //set the cursor position
   var range = document.createRange();
-  range.setStart(nextOne, 0);
-  range.setEnd(nextOne, 0);
+  range.setStart(nextNode, startAt);
+  range.setEnd(nextNode, startAt);
   var selection = window.getSelection();
   selection.removeAllRanges();
   selection.addRange(range);
-  var height = parseInt(getComputedStyle(anchorNode).getPropertyValue("height"));
+  
+  //scroll
   var p = document.querySelector('.textbox-container');
-  p.scrollBy(0, height);
+  p.scrollBy(0, scrollOffset);
 };
 
 function insertTimestamp(){
