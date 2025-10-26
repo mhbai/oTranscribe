@@ -21,10 +21,13 @@ $ make build_prod
 ```
 $ cp -r dist ../
 $ git checkout --orphan gh-pages
+# 刪除這個目錄下的所有檔案
 $ git rm -rf .
+$ rm -rf node_modules
+$ rm -rf dist
 $ cp -r ../dist/* .
 $ git add .
 $ git commit -m "Initial gh-pages commit" 
 $ git push origin gh-pages
-$ git checkout main
+$ git checkout master
 ```
