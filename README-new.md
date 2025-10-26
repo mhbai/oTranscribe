@@ -19,5 +19,12 @@ $ make build_prod
 
 3. 步署：
 ```
-$ cp 
+$ cp -r dist ../
+$ git checkout --orphan gh-pages
+$ git rm -rf .
+$ cp -r ../dist/* .
+$ git add .
+$ git commit -m "Initial gh-pages commit" 
+$ git push origin gh-pages
+$ git checkout main
 ```
