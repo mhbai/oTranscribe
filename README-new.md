@@ -19,5 +19,5 @@ $ make build_prod
 
 3. 步署：
 ```
-$ sudo cp -a dist /var/www/html/oTranscribe
+$ cp 
 ```
